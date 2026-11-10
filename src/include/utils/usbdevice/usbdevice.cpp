@@ -1,20 +1,23 @@
 #include "usbdevice.h"
 
-#include "appstate.h"
-#include "product-agp.h"
-#include "product-ecam.h"
-#include "product-fcu-efis.h"
-#include "product-fmc.h"
-#include "product-joystick.h"
-#include "product-nws.h"
-#include "product-orion-throttle.h"
-#include "product-pap3-mcp.h"
-#include "product-pdc.h"
-#include "product-rmp.h"
-#include "product-tcas.h"
-#include "product-ursa-minor-throttle.h"
-#include "xplane-bindings.h"
+ #include "appstate.h"
 
+// #include "product-agp.h"
+// #include "product-ecam.h"
+// #include "product-fcu-efis.h"
+
+#include "product-fmc.h"
+
+// #include "product-joystick.h"
+// #include "product-nws.h"
+// #include "product-orion-throttle.h"
+// #include "product-pap3-mcp.h"
+// #include "product-pdc.h"
+// #include "product-rmp.h"
+// #include "product-tcas.h"
+// #include "product-ursa-minor-throttle.h"
+
+#include "xplane-bindings.h"
 #include <algorithm>
 #include <map>
 #include <set>
@@ -127,31 +130,31 @@ USBDevice *USBDevice::Device(HIDDeviceHandle hidDevice, uint16_t vendorId, uint1
     }
 
     switch (productId) {
-        case 0xBC27: { // URSA MINOR Airline Joystick L
-            constexpr uint8_t identifierByte = 0x07;
-            constexpr uint8_t motorCode = 0xBF;
-            return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
-        }
-        case 0xBC28: { // URSA MINOR Airline Joystick R
-            constexpr uint8_t identifierByte = 0x08;
-            constexpr uint8_t motorCode = 0xBF;
-            return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
-        }
-        case 0xBC2A: { // URSA MINOR Fighter Joystick L
-            constexpr uint8_t identifierByte = 0x0A;
-            constexpr uint8_t motorCode = 0xBF;
-            return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
-        }
-        case 0xBC29: { // URSA MINOR Fighter Joystick R
-            constexpr uint8_t identifierByte = 0x09;
-            constexpr uint8_t motorCode = 0xBF;
-            return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
-        }
-        case 0xBEA8: { // WINWING Orion Joystick Base 2 + JGRIP-F16
-            constexpr uint8_t identifierByte = 0x01;
-            constexpr uint8_t motorCode = 0x00;
-            return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
-        }
+        //case 0xBC27: { // URSA MINOR Airline Joystick L
+        //    constexpr uint8_t identifierByte = 0x07;
+        //    constexpr uint8_t motorCode = 0xBF;
+        //    return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
+        //}
+        //case 0xBC28: { // URSA MINOR Airline Joystick R
+        //    constexpr uint8_t identifierByte = 0x08;
+        //    constexpr uint8_t motorCode = 0xBF;
+        //    return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
+        //}
+        //case 0xBC2A: { // URSA MINOR Fighter Joystick L
+        //    constexpr uint8_t identifierByte = 0x0A;
+        //    constexpr uint8_t motorCode = 0xBF;
+        //    return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
+        //}
+        //case 0xBC29: { // URSA MINOR Fighter Joystick R
+        //    constexpr uint8_t identifierByte = 0x09;
+        //    constexpr uint8_t motorCode = 0xBF;
+        //    return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
+        //}
+        //case 0xBEA8: { // WINWING Orion Joystick Base 2 + JGRIP-F16
+        //    constexpr uint8_t identifierByte = 0x01;
+        //    constexpr uint8_t motorCode = 0x00;
+        //    return new ProductJoystick(hidDevice, vendorId, productId, vendorName, productName, identifierByte, motorCode);
+        //}
 
         case 0xBB36: { // MCDU-32 (Captain)
             constexpr uint8_t identifierByte = 0x32;
@@ -205,62 +208,62 @@ USBDevice *USBDevice::Device(HIDDeviceHandle hidDevice, uint16_t vendorId, uint1
             return new ProductFMC(hidDevice, vendorId, productId, vendorName, productName, FMCHardwareType::HARDWARE_PFP7, FMCDeviceVariant::VARIANT_OBSERVER, identifierByte);
         }
 
-        case 0xBB10: // FCU only
-        case 0xBC1E: // FCU + EFIS-R
-        case 0xBC1D: // FCU + EFIS-L
-        case 0xBA01: // FCU + EFIS-L + EFIS-R
-            return new ProductFCUEfis(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBB10: // FCU only
+        //case 0xBC1E: // FCU + EFIS-R
+        //case 0xBC1D: // FCU + EFIS-L
+        //case 0xBA01: // FCU + EFIS-L + EFIS-R
+        //    return new ProductFCUEfis(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xBF0F: // PAP3-MCP
-            return new ProductPAP3MCP(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBF0F: // PAP3-MCP
+        //    return new ProductPAP3MCP(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xBB61: { // 3N PDC L
-            constexpr uint8_t identifierByte = 0x60;
-            return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3N_CAPTAIN, identifierByte);
-        }
+        //case 0xBB61: { // 3N PDC L
+        //    constexpr uint8_t identifierByte = 0x60;
+        //    return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3N_CAPTAIN, identifierByte);
+        //}
 
-        case 0xBB62: { // 3N PDC R
-            constexpr uint8_t identifierByte = 0x60;
-            return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3N_FIRSTOFFICER, identifierByte);
-        }
+        //case 0xBB62: { // 3N PDC R
+        //    constexpr uint8_t identifierByte = 0x60;
+        //    return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3N_FIRSTOFFICER, identifierByte);
+        //}
 
-        case 0xBB51: { // 3M PDC L
-            constexpr uint8_t identifierByte = 0x50;
-            return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3M_CAPTAIN, identifierByte);
-        }
+        //case 0xBB51: { // 3M PDC L
+        //    constexpr uint8_t identifierByte = 0x50;
+        //    return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3M_CAPTAIN, identifierByte);
+        //}
 
-        case 0xBB52: { // 3M PDC R
-            constexpr uint8_t identifierByte = 0x50;
-            return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3M_FIRSTOFFICER, identifierByte);
-        }
+        //case 0xBB52: { // 3M PDC R
+        //    constexpr uint8_t identifierByte = 0x50;
+        //    return new ProductPDC(hidDevice, vendorId, productId, vendorName, productName, PDCDeviceVariant::VARIANT_3M_FIRSTOFFICER, identifierByte);
+        //}
 
-        case 0xBB70: // ECAM
-            return new ProductECAM(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBB70: // ECAM
+        //    return new ProductECAM(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xBB80: // AGP
-            return new ProductAGP(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBB80: // AGP
+        //    return new ProductAGP(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xBB81: // TCAS
-            return new ProductTCAS(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBB81: // TCAS
+        //    return new ProductTCAS(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xBB83: // RMP L
-        case 0xBB84: // RMP R
-        case 0xBB85: // RMP C
-            return new ProductRMP(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBB83: // RMP L
+        //case 0xBB84: // RMP R
+        //case 0xBB85: // RMP C
+        //    return new ProductRMP(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xB920: // URSA MINOR 32 Throttle Metal L
-        case 0xB930: // URSA MINOR 32 Throttle Metal R
-            return new ProductUrsaMinorThrottle(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xB920: // URSA MINOR 32 Throttle Metal L
+        //case 0xB930: // URSA MINOR 32 Throttle Metal R
+        //    return new ProductUrsaMinorThrottle(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xB961: // WINCTRL 32 NWS (Nosewheel Steering tiller)
-            return new ProductNWS(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xB961: // WINCTRL 32 NWS (Nosewheel Steering tiller)
+        //    return new ProductNWS(hidDevice, vendorId, productId, vendorName, productName);
 
-        case 0xBD64: // Orion Throttle Base II + F15EX HANDLE L + F15EX HANDLE R
-            return new ProductOrionThrottle(hidDevice, vendorId, productId, vendorName, productName);
+        //case 0xBD64: // Orion Throttle Base II + F15EX HANDLE L + F15EX HANDLE R
+        //    return new ProductOrionThrottle(hidDevice, vendorId, productId, vendorName, productName);
 
-            // Not yet implemented devices:
-            // 0xB980 = WINCTRL Orion 32 Rudder Pedals Metal
-            // 0xBEF0 = WINCTRL Orion Combat Rudder Pedals Metal
+        //    // Not yet implemented devices:
+        //    // 0xB980 = WINCTRL Orion 32 Rudder Pedals Metal
+        //    // 0xBEF0 = WINCTRL Orion Combat Rudder Pedals Metal
 
         default: {
             // Device creation is retried on every enumeration pass, so log each

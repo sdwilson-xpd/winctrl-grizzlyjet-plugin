@@ -18,8 +18,8 @@ if(MSVC)
 endif()
 
 IF(NOT MSVC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -g1")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g1")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
 ENDIF()
 PROJECT(winctrl C CXX)
 
@@ -85,6 +85,17 @@ FUNCTION(FIND_SOURCE_FILES return_list base_dir)
     ENDIF()
     FILE(GLOB_RECURSE new_list ${file_patterns})
 
+	
+	
+	# Exclude all FMC aircraft profiles except the X-Crafts E-Jets
+	LIST(FILTER new_list EXCLUDE REGEX
+		".*/products/fmc/profiles/.*-fmc-profile\\.cpp$"
+	)
+
+	LIST(APPEND new_list
+		"${base_dir}/include/products/fmc/profiles/xcrafts-ejets-fmc-profile.cpp"
+	)	
+
     LIST(FIND new_list "${base_dir}/main.cpp" main_index)
     IF(main_index GREATER_EQUAL 0)
         LIST(REMOVE_AT new_list ${main_index})
@@ -142,6 +153,20 @@ ENDFUNCTION(add_xplane_sdk_definitions)
 FUNCTION(add_xplane_plugin library_name library_version src_dir)
     MESSAGE(STATUS "Preparing X-Plane plugin '${library_name}' at ${src_dir}")
     FIND_SOURCE_FILES(FILES ${src_dir})
+	
+	
+		
+	# Keep only the E-Jets CDU aircraft profile
+	list(FILTER FILES EXCLUDE REGEX "/profiles/.*\\.cpp$")
+
+	list(APPEND FILES
+		"${src_dir}/include/products/fmc/profiles/xcrafts-ejets-fmc-profile.cpp"
+	)
+
+	# Exclude all non-CDU hardware implementations
+	list(FILTER FILES EXCLUDE REGEX
+		"/products/(agp|ecam|fcu-efis|joystick|nws|orion-throttle|pap3-mcp|pdc|rmp|tcas|ursa-minor-throttle)/.*\\.cpp$"
+	)
 
     IF(APPLE)
         ADD_EXECUTABLE(${library_name} ${FILES})

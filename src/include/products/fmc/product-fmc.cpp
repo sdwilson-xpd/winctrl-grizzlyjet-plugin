@@ -4,32 +4,9 @@
 #include "config.h"
 #include "dataref.h"
 #include "plugins-menu.h"
-#include "profiles/a220-fmc-profile.h"
-#include "profiles/bae146-fmc-profile.h"
-#include "profiles/c525-fmc-profile.h"
-#include "profiles/ff350-fmc-profile.h"
-#include "profiles/ffa320-fmc-profile.h"
-#include "profiles/ff767-fmc-profile.h"
-#include "profiles/ff777-fmc-profile.h"
-#include "profiles/felis-742-fmc-profile.h"
-#include "profiles/felis742-ltn-fmc-profile.h"
-#include "profiles/fjs732-fmc-profile.h"
-#include "profiles/fps748-fmc-profile.h"
-#include "profiles/ixeg733-fmc-profile.h"
-#include "profiles/jar330-fmc-profile.h"
-#include "profiles/laminar-a333-fmc-profile.h"
-#include "profiles/laminar-citx-fmc-profile.h"
-#include "profiles/magknight787-fmc-profile.h"
-#include "profiles/pa28-fmc-profile.h"
-#include "profiles/q4xp-fmc-profile.h"
-#include "profiles/rotatemd11-fmc-profile.h"
-#include "profiles/sparky744-fmc-profile.h"
-#include "profiles/stratosphere77w-fmc-profile.h"
-#include "profiles/cl650-fmc-profile.h"
-#include "profiles/toliss-fmc-profile.h"
+
 #include "profiles/xcrafts-ejets-fmc-profile.h"
-#include "profiles/xcrafts-erj-fmc-profile.h"
-#include "profiles/zibo-fmc-profile.h"
+
 #include "usbcontroller.h"
 
 #include <algorithm>
@@ -82,111 +59,12 @@ ProductFMC::~ProductFMC() {
 }
 
 void ProductFMC::setProfileForCurrentAircraft() {
-    if (JAR330FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new JAR330FMCProfile(this);
-        profileReady = true;
-    } else if (FF350FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new FF350FMCProfile(this);
-        profileReady = true;
-    } else if (FFA320FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new FFA320FMCProfile(this);
-        profileReady = true;
-    } else if (TolissFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new TolissFMCProfile(this);
-        profileReady = true;
-    } else if (CL650FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new CL650FMCProfile(this);
-        profileReady = true;
-    } else if (Q4XPFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new Q4XPFMCProfile(this);
-        profileReady = true;
-    } else if (C525FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new C525FMCProfile(this);
-        profileReady = true;
-    } else if (FJS732FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new FJS732FMCProfile(this);
-        profileReady = true;
-    } else if (LaminarA333FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new LaminarA333FMCProfile(this);
-        profileReady = true;
-    } else if (LaminarCitXFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new LaminarCitXFMCProfile(this);
-        profileReady = true;
-    } else if (XCraftsEjetsFMCProfile::IsEligible()) {
+    if (XCraftsEjetsFMCProfile::IsEligible()) {
         clearDisplay();
         profile = new XCraftsEjetsFMCProfile(this);
         profileReady = true;
-    } else if (XCraftsErjFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new XCraftsErjFMCProfile(this);
-        profileReady = true;
-    } else if (ZiboFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new ZiboFMCProfile(this);
-        profileReady = true;
-    } else if (RotateMD11FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new RotateMD11FMCProfile(this);
-        profileReady = true;
-    } else if (FlightFactor767FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new FlightFactor767FMCProfile(this);
-        profileReady = true;
-    } else if (Strato77WFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new Strato77WFMCProfile(this);
-        profileReady = true;
-    } else if (FlightFactor777FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new FlightFactor777FMCProfile(this);
-        profileReady = true;
-    } else if (FPS748FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new FPS748FMCProfile(this);
-        profileReady = true;
-    } else if (BAE146FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new BAE146FMCProfile(this);
-        profileReady = true;
-    } else if (SparkyB744FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new SparkyB744FMCProfile(this);
-        profileReady = true;
-    } else if (Felis742FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new Felis742FMCProfile(this);
-        profileReady = true;
-    } else if (IXEG733FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new IXEG733FMCProfile(this);
-        profileReady = true;
-    } else if (PA28FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new PA28FMCProfile(this);
-        profileReady = true;
-    } else if (A220FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new A220FMCProfile(this);
-        profileReady = true;
-    } else if (Felis742LTNFMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new Felis742LTNFMCProfile(this);
-        profileReady = true;
-    } else if (Magknight787FMCProfile::IsEligible()) {
-        clearDisplay();
-        profile = new Magknight787FMCProfile(this);
-        profileReady = true;
-    } else {
+    }
+    else {
         profile = nullptr;
         profileReady = false;
     }
