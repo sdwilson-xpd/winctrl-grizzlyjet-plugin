@@ -1,0 +1,56 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -146,7 +146,7 @@
+     ELSEIF(WIN32)
+         ADD_LIBRARY(${library_name} MODULE ${FILES})
+         # TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC -D_CRT_SECURE_NO_WARNINGS /bigobj)
+-        TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC _CRT_SECURE_NO_WARNINGS)
++        TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC _CRT_SECURE_NO_WARNINGS NOMINMAX)
+         IF(MSVC)
+             TARGET_COMPILE_OPTIONS(${library_name} PRIVATE /bigobj /utf-8 /Zc:__cplusplus)
+             # The upstream project requests C++23; MSVC exposes its newest
+--- a/src/include/utils/dataref.cpp
++++ b/src/include/utils/dataref.cpp
+@@ -37,19 +37,19 @@
+ }
+ 
+ template void Dataref::createDataref<int>(
+-    const char *ref, int *value, bool writable = false, DatarefShouldChangeCallback<int> changeCallback = nullptr);
++    const char *ref, int *value, bool writable, DatarefShouldChangeCallback<int> changeCallback);
+ template void Dataref::createDataref<bool>(
+-    const char *ref, bool *value, bool writable = false, DatarefShouldChangeCallback<bool> changeCallback = nullptr);
++    const char *ref, bool *value, bool writable, DatarefShouldChangeCallback<bool> changeCallback);
+ template void Dataref::createDataref<float>(
+-    const char *ref, float *value, bool writable = false, DatarefShouldChangeCallback<float> changeCallback = nullptr);
++    const char *ref, float *value, bool writable, DatarefShouldChangeCallback<float> changeCallback);
+ template void Dataref::createDataref<double>(const char *ref,
+     double *value,
+-    bool writable = false,
+-    DatarefShouldChangeCallback<double> changeCallback = nullptr);
++    bool writable,
++    DatarefShouldChangeCallback<double> changeCallback);
+ template void Dataref::createDataref<std::string>(const char *ref,
+     std::string *value,
+-    bool writable = false,
+-    DatarefShouldChangeCallback<std::string> changeCallback = nullptr);
++    bool writable,
++    DatarefShouldChangeCallback<std::string> changeCallback);
+ 
+ template<typename T>
+ void Dataref::createDataref(const char *ref, T *value, bool writable, DatarefShouldChangeCallback<T> changeCallback) {
+--- a/src/include/utils/usbdevice/usbdevice.cpp
++++ b/src/include/utils/usbdevice/usbdevice.cpp
+@@ -21,7 +21,13 @@
+ #include <XPLMUtilities.h>
+ 
+ // The desktop app overrides this function to get notified of button presses
++#if defined(_MSC_VER)
++// MSVC has no GCC weak-attribute equivalent. The desktop override is
++// excluded from this Windows X-Plane plugin build.
++void notifyButtonPressed(uint16_t buttonId, uint16_t productId) {}
++#else
+ __attribute__((weak)) void notifyButtonPressed(uint16_t buttonId, uint16_t productId) {}
++#endif
+ 
+ // Ordered as the product ID switch in Device() below, so the two stay easy to
+ // compare. Names match classIdentifier() of the device they cover.

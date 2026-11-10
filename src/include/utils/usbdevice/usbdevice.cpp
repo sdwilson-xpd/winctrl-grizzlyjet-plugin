@@ -21,7 +21,13 @@
 #include <XPLMUtilities.h>
 
 // The desktop app overrides this function to get notified of button presses
+#if defined(_MSC_VER)
+// MSVC has no GCC weak-attribute equivalent. The desktop override is
+// excluded from this Windows X-Plane plugin build.
+void notifyButtonPressed(uint16_t buttonId, uint16_t productId) {}
+#else
 __attribute__((weak)) void notifyButtonPressed(uint16_t buttonId, uint16_t productId) {}
+#endif
 
 // Ordered as the product ID switch in Device() below, so the two stay easy to
 // compare. Names match classIdentifier() of the device they cover.

@@ -588,7 +588,8 @@ void ProductFMC::sendDrawingPage(const std::vector<std::vector<char>> &p) {
                 text.insert(text.end(), glyph.begin(), glyph.end());
             }
 
-            const bool small = format / 363 == 1;
+            //const bool small = format / 363 == 1;
+            const bool useSmallFont = format / 363 == 1;
             const int textColour = std::min((format % 363) / 33, FormatColourCount - 1);
             const int backColour = std::min((format % 33) / 3, FormatColourCount - 1);
             const uint16_t x = left + start * layout.characterWidth;
@@ -603,7 +604,8 @@ void ProductFMC::sendDrawingPage(const std::vector<std::vector<char>> &p) {
                 continue;
             }
 
-            const uint32_t fontId = small ? SmallFontId : LargeFontId;
+            //const uint32_t fontId = small ? SmallFontId : LargeFontId;
+            const uint32_t fontId = useSmallFont ? SmallFontId : LargeFontId;
             const uint8_t font[] = {(uint8_t) fontId, (uint8_t) (fontId >> 8), (uint8_t) (fontId >> 16), (uint8_t) (fontId >> 24)};
             appendCommandBlock(stream, 0x111, font, sizeof(font), false);
             appendArgbBlock(stream, 0x112, FormatColours[textColour]);

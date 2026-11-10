@@ -416,9 +416,11 @@ bool padGlyphsToHeight(std::vector<std::vector<unsigned char>> &data, unsigned c
         uint32_t sizeField = readU32(geo, 37);
         uint32_t sizeConst = sizeField >= glyphCount * oldDatalen ? sizeField - glyphCount * oldDatalen : 0;
         geo[21] = static_cast<unsigned char>(newWidth & 0xff);
-        geo[22] = static_cast<unsigned char>((newWidth >> 8) & 0xff);
+        //geo[22] = static_cast<unsigned char>((newWidth >> 8) & 0xff);
+        geo[22] = 0;
         geo[23] = static_cast<unsigned char>(newHeight & 0xff);
-        geo[24] = static_cast<unsigned char>((newHeight >> 8) & 0xff);
+       // geo[24] = static_cast<unsigned char>((newHeight >> 8) & 0xff);
+        geo[24] = 0;
         putU32(geo, 25, newDataLen);
         putU32(geo, 37, glyphCount * newDataLen + sizeConst);
 

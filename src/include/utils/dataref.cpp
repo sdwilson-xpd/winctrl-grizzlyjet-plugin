@@ -37,19 +37,19 @@ Dataref *Dataref::getInstance() {
 }
 
 template void Dataref::createDataref<int>(
-    const char *ref, int *value, bool writable = false, DatarefShouldChangeCallback<int> changeCallback = nullptr);
+    const char *ref, int *value, bool writable, DatarefShouldChangeCallback<int> changeCallback);
 template void Dataref::createDataref<bool>(
-    const char *ref, bool *value, bool writable = false, DatarefShouldChangeCallback<bool> changeCallback = nullptr);
+    const char *ref, bool *value, bool writable, DatarefShouldChangeCallback<bool> changeCallback);
 template void Dataref::createDataref<float>(
-    const char *ref, float *value, bool writable = false, DatarefShouldChangeCallback<float> changeCallback = nullptr);
+    const char *ref, float *value, bool writable, DatarefShouldChangeCallback<float> changeCallback);
 template void Dataref::createDataref<double>(const char *ref,
     double *value,
-    bool writable = false,
-    DatarefShouldChangeCallback<double> changeCallback = nullptr);
+    bool writable,
+    DatarefShouldChangeCallback<double> changeCallback);
 template void Dataref::createDataref<std::string>(const char *ref,
     std::string *value,
-    bool writable = false,
-    DatarefShouldChangeCallback<std::string> changeCallback = nullptr);
+    bool writable,
+    DatarefShouldChangeCallback<std::string> changeCallback);
 
 template<typename T>
 void Dataref::createDataref(const char *ref, T *value, bool writable, DatarefShouldChangeCallback<T> changeCallback) {

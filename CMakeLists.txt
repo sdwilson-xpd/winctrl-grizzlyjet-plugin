@@ -13,8 +13,14 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 # from the archive. Plain -g2 (what -g implies) was tried and rejected: across
 # this codebase's heavy template/header use it produced 150+MB of per-variable
 # location debug info per platform for no symbolication benefit -g1 lacks.
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -g1")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g1")
+if(MSVC)
+    target_compile_options(winctrl PRIVATE /MP)
+endif()
+
+IF(NOT MSVC)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -g1")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g1")
+ENDIF()
 PROJECT(winctrl C CXX)
 
 IF(APPLE)
@@ -98,9 +104,11 @@ FUNCTION(add_xplane_sdk_definitions library_name library_version)
         TARGET_COMPILE_OPTIONS(${library_name} PRIVATE "-static")
         TARGET_LINK_OPTIONS(${library_name} PRIVATE "-static-libstdc++" "-static-libgcc")
     ELSEIF(WIN32)
-        TARGET_COMPILE_OPTIONS(${library_name} PRIVATE "-static")
+        IF(NOT MSVC)
+            TARGET_COMPILE_OPTIONS(${library_name} PRIVATE "-static")
+            TARGET_LINK_OPTIONS(${library_name} PRIVATE "-static-libstdc++" "-static-libgcc" "-static" "-Wl,--allow-multiple-definition")
+        ENDIF()
         TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC -DAPL=0 -DIBM=1 -DLIN=0)
-        TARGET_LINK_OPTIONS(${library_name} PRIVATE "-static-libstdc++" "-static-libgcc" "-static" "-Wl,--allow-multiple-definition")
     ENDIF()
 
     IF(library_version EQUAL 200)
@@ -142,7 +150,13 @@ FUNCTION(add_xplane_plugin library_name library_version src_dir)
     ELSEIF(WIN32)
         ADD_LIBRARY(${library_name} MODULE ${FILES})
         # TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC -D_CRT_SECURE_NO_WARNINGS /bigobj)
-        TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC _CRT_SECURE_NO_WARNINGS)
+        TARGET_COMPILE_DEFINITIONS(${library_name} PUBLIC _CRT_SECURE_NO_WARNINGS NOMINMAX)
+        IF(MSVC)
+            TARGET_COMPILE_OPTIONS(${library_name} PRIVATE /bigobj /utf-8 /Zc:__cplusplus)
+            # The upstream project requests C++23; MSVC exposes its newest
+            # implemented language features via /std:c++latest.
+            TARGET_COMPILE_OPTIONS(${library_name} PRIVATE /std:c++latest)
+        ENDIF()
         # TARGET_COMPILE_OPTIONS(${library_name} PUBLIC /bigobj)
     ENDIF()
 
@@ -158,12 +172,24 @@ FUNCTION(add_xplane_plugin library_name library_version src_dir)
         IF(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${DIRECTORY_PREFIX}")
             FILE(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${DIRECTORY_PREFIX}")
         ENDIF()
-        SET_TARGET_PROPERTIES(${library_name} PROPERTIES OUTPUT_NAME "${DIRECTORY_PREFIX}/${library_name}.xpl")
+        IF(MSVC)
+            SET_TARGET_PROPERTIES(${library_name} PROPERTIES
+                OUTPUT_NAME "${library_name}"
+                PREFIX ""
+                SUFFIX ".xpl"
+                LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${DIRECTORY_PREFIX}"
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${DIRECTORY_PREFIX}"
+            )
+        ELSE()
+            SET_TARGET_PROPERTIES(${library_name} PROPERTIES OUTPUT_NAME "${DIRECTORY_PREFIX}/${library_name}.xpl")
+        ENDIF()
     ENDIF()
     add_xplane_sdk_definitions(${library_name} ${library_version})
 
     SET_TARGET_PROPERTIES(${library_name} PROPERTIES PREFIX "")
-    SET_TARGET_PROPERTIES(${library_name} PROPERTIES SUFFIX "")
+    IF(NOT MSVC)
+        SET_TARGET_PROPERTIES(${library_name} PROPERTIES SUFFIX "")
+    ENDIF()
     SET_TARGET_PROPERTIES(${library_name} PROPERTIES LINKER_LANGUAGE CXX)
 
     IF(APPLE)
