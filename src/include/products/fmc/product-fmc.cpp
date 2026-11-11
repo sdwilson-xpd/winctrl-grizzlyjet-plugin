@@ -6,6 +6,7 @@
 #include "plugins-menu.h"
 
 #include "profiles/xcrafts-ejets-fmc-profile.h"
+#include "profiles/grizzlyjet-fmc-profile.h"
 
 #include "usbcontroller.h"
 
@@ -59,12 +60,17 @@ ProductFMC::~ProductFMC() {
 }
 
 void ProductFMC::setProfileForCurrentAircraft() {
-    if (XCraftsEjetsFMCProfile::IsEligible()) {
+    // GrizzlyJet-X uses the E-Jets FMS datarefs, so identify it by aircraft name
+    // first rather than letting the generic E-Jets dataref check claim it.
+    if (GrizzlyJetFMCProfile::IsEligible()) {
+        clearDisplay();
+        profile = new GrizzlyJetFMCProfile(this);
+        profileReady = true;
+    } else if (!GrizzlyJetFMCProfile::IsAircraftLoaded() && XCraftsEjetsFMCProfile::IsEligible()) {
         clearDisplay();
         profile = new XCraftsEjetsFMCProfile(this);
         profileReady = true;
-    }
-    else {
+    } else {
         profile = nullptr;
         profileReady = false;
     }

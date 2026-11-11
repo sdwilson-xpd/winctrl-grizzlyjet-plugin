@@ -13,9 +13,6 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 # from the archive. Plain -g2 (what -g implies) was tried and rejected: across
 # this codebase's heavy template/header use it produced 150+MB of per-variable
 # location debug info per platform for no symbolication benefit -g1 lacks.
-if(MSVC)
-    target_compile_options(winctrl PRIVATE /MP)
-endif()
 
 IF(NOT MSVC)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
@@ -85,17 +82,6 @@ FUNCTION(FIND_SOURCE_FILES return_list base_dir)
     ENDIF()
     FILE(GLOB_RECURSE new_list ${file_patterns})
 
-	
-	
-	# Exclude all FMC aircraft profiles except the X-Crafts E-Jets
-	LIST(FILTER new_list EXCLUDE REGEX
-		".*/products/fmc/profiles/.*-fmc-profile\\.cpp$"
-	)
-
-	LIST(APPEND new_list
-		"${base_dir}/include/products/fmc/profiles/xcrafts-ejets-fmc-profile.cpp"
-	)	
-
     LIST(FIND new_list "${base_dir}/main.cpp" main_index)
     IF(main_index GREATER_EQUAL 0)
         LIST(REMOVE_AT new_list ${main_index})
@@ -156,12 +142,13 @@ FUNCTION(add_xplane_plugin library_name library_version src_dir)
 	
 	
 		
-	# Keep only the E-Jets CDU aircraft profile
-	list(FILTER FILES EXCLUDE REGEX "/profiles/.*\\.cpp$")
+	# Keep the E-Jets and GrizzlyJet X CDU profiles
+list(FILTER FILES EXCLUDE REGEX "/profiles/.*\\.cpp$")
 
-	list(APPEND FILES
-		"${src_dir}/include/products/fmc/profiles/xcrafts-ejets-fmc-profile.cpp"
-	)
+list(APPEND FILES
+    "${src_dir}/include/products/fmc/profiles/xcrafts-ejets-fmc-profile.cpp"
+    "${src_dir}/include/products/fmc/profiles/grizzlyjet-fmc-profile.cpp"
+)
 
 	# Exclude all non-CDU hardware implementations
 	list(FILTER FILES EXCLUDE REGEX
@@ -253,3 +240,25 @@ IF(NOT DEFINED SDK_VERSION)
 ENDIF()
 
 add_xplane_plugin(winctrl ${SDK_VERSION} "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+if(MSVC)
+    target_compile_options(winctrl PRIVATE /MP)
+endif()
+
+if(WIN32)
+    set(PLUGIN_DIRS
+        "E:/X-Plane Hub/X-Plane 12/Aircraft/! GrizzlyJet X/plugins/winctrl/win_x64"
+        "E:/X-Plane Hub/X-Plane 12/Aircraft/! X-Crafts Aircraft/EJets Family WIP/plugins/winctrl/win_x64"
+        "E:/X-Plane Hub/X-Plane 12/Aircraft/! X-Crafts Aircraft/Embraer E-Jets Family v2.1.0/plugins/winctrl/win_x64"
+    )
+
+    foreach(PLUGIN_DIR IN LISTS PLUGIN_DIRS)
+        add_custom_command(TARGET winctrl POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${PLUGIN_DIR}"
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "$<TARGET_FILE:winctrl>"
+                "${PLUGIN_DIR}/winctrl.xpl"
+            VERBATIM
+        )
+    endforeach()
+endif()
