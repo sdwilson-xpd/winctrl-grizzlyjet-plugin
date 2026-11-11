@@ -792,6 +792,17 @@ void ProductFMC::setFont(FontVariant preferredVariant, bool force) {
         return;
     }
 
+
+    // GrizzlyTech custom font colors
+    if (GrizzlyJetFMCProfile::IsEligible() ||
+        XCraftsEjetsFMCProfile::IsEligible()) {
+
+        Font::ApplyCustomPalette(font);
+    }
+
+
+
+
     // Apply the SimAppPro "Screen Layout" for the connected hardware so the 14 display
     // rows line up with the physical LSK keys. ResizeCellHeight is best-effort: it
     // no-ops at the authored height (MCDU 29) and leaves `font` untouched if it cannot

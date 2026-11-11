@@ -608,6 +608,97 @@ uint16_t blockFunctionId(const CommandStream &stream, size_t pos) {
 }
 } // namespace
 
+// GrizzlyTech custom font colors
+int Font::ApplyCustomPalette(
+    std::vector<std::vector<unsigned char>>& data)
+{
+    // GrizzlyJet-X CDU palette: RGB (0xRRGGBB).
+    // Change these four values to customize the colors.
+    constexpr uint32_t GREEN = 0x00FF3D;
+    constexpr uint32_t CYAN = 0x00B8FF;
+    constexpr uint32_t MAGENTA = 0xFF63FF;
+    constexpr uint32_t YELLOW = 0xFFD800;
+
+    CommandStream stream;
+
+    if (!parseCommandStream(data, stream))
+        return 0;
+
+    int changed = 0;
+
+    for (const auto& block : stream.blocks) {
+        const size_t start = block.first;
+        const size_t end = block.second;
+
+        // Command 0x0119: 14-byte palette entry.
+        if (end - start != 31 ||
+            blockFunctionId(stream, start) != 0x0119)
+            continue;
+
+        const size_t p = start + 17;
+        const uint8_t group = stream.bytes[p];
+        const uint8_t entry = stream.bytes[p + 6];
+
+        uint32_t original = 0;
+        uint32_t replacement = 0;
+
+        // Group 2 and group 3 contain the same colors.
+        if (group == 2 || group == 3) {
+            const uint8_t base = (group == 2) ? 0 : 11;
+
+            if (entry == base + 8) {
+                original = 0x00FF3D;
+                replacement = GREEN;
+            }
+            else if (entry == base + 7) {
+                original = 0x00FFFF;
+                replacement = CYAN;
+            }
+            else if (entry == base + 9) {
+                original = 0xFF63FF;
+                replacement = MAGENTA;
+            }
+            else if (entry == base + 11) {
+                original = 0xFFFF00;
+                replacement = YELLOW;
+            }
+            else {
+                continue;
+            }
+        }
+        else {
+            continue;
+        }
+
+        // Palette colors are stored as BGRA.
+        const uint32_t current =
+            (uint32_t(stream.bytes[p + 4]) << 16) |
+            (uint32_t(stream.bytes[p + 3]) << 8) |
+            uint32_t(stream.bytes[p + 2]);
+
+        // Only modify entries containing the expected color.
+        if (current != original)
+            continue;
+
+        const uint8_t b = replacement & 0xff;
+        const uint8_t g = (replacement >> 8) & 0xff;
+        const uint8_t r = (replacement >> 16) & 0xff;
+
+        const auto& blue = stream.origin[p + 2];
+        const auto& green = stream.origin[p + 3];
+        const auto& red = stream.origin[p + 4];
+
+        data[blue.first][blue.second] = b;
+        data[green.first][green.second] = g;
+        data[red.first][red.second] = r;
+
+        ++changed;
+    }
+
+    return changed;
+}
+
+
 bool Font::RemoveCommandBlocks(std::vector<std::vector<unsigned char>> &data, uint16_t functionId) {
     CommandStream stream;
     if (!parseCommandStream(data, stream)) {

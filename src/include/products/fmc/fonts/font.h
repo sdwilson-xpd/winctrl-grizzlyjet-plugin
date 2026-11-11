@@ -41,6 +41,11 @@ class Font {
         // if the font structure could not be parsed.
         static bool ResizeCellHeight(std::vector<std::vector<unsigned char>> &data, unsigned char cellHeight, unsigned char cellWidth = 23);
 
+        // GrizzlyTech custom font colors
+        static int ApplyCustomPalette(std::vector<std::vector<unsigned char>>& data);
+
         static bool RemoveCommandBlocks(std::vector<std::vector<unsigned char>> &data, uint16_t functionId);};
+
+
 
 #endif
